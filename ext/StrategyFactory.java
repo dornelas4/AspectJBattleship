@@ -1,14 +1,17 @@
 package ext;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Random;
 import java.util.Stack;
 
 import battleship.model.*;
 
 abstract class Strategy {
-	
+
 	public HashMap<Integer,Place> allMoves;
-	
+	public List<Integer> allKeys;
+
 	/*
 	 * Create hashmap with all possible board moves
 	 */
@@ -20,18 +23,20 @@ abstract class Strategy {
 			boardIndex++;
 		}
 	}
+	public void setAllKeys(){
+		allKeys = new ArrayList<Integer>();
+		for(int i =1; i<=100;i++){
+			allKeys.add(i);
+		}
+	}
 	/* 
 	 * Generates computer opponent move
 	 * To be overriden in strategy classes.
 	 */
-	void move(){}
-	
-	/*
-	 * Method used to delete a movement that will no longer be used in game
-	 */
-	public void removeMovement(int positionNumber){
-		allMoves.remove(positionNumber);
+	void move(){
+
 	}
+
 
 	/*
 	 * Instantiate strategy to be used
@@ -39,51 +44,22 @@ abstract class Strategy {
 	 */
 	public Strategy(Iterable<Place> places){
 		setAllMoves(places);
-		
+		setAllKeys();
+
 	}
-	
-	
-	//////////////////////////////////////////////////////////////////////////
+
+
+	////////////////////////////////////////////////////////////////////////// 
+
 
 	
-	public class SmartStrategy extends Strategy  {
-		Stack<Integer> nextAIShots;
-		boolean shipHit = false;
-		
-		public SmartStrategy(Iterable<Place> places){
-			super(places);
-			setAllMoves(places);
-			nextAIShots = new Stack<Integer>();
-		}
-		@Override
-		void move(){
-			
-		
-		}
-	}
+
 	
-	public class SweepStrategy extends Strategy{
-		
-		public SweepStrategy(Iterable<Place> places){
-			super(places);
-		}
-		@Override
-		void move(){
-			
-		}
-	}
+
 	
-	public class RandomStrategy extends Strategy{
-		public RandomStrategy(Iterable<Place> places){
-			super(places);
-		}
-		@Override
-		void move(){
-		}
-	}
 }
-	
-	
-	
+
+
+
 
 

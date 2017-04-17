@@ -38,7 +38,7 @@ public class BattleshipDialog extends JDialog {
     private final JLabel msgBar = new JLabel("Shots: 0");
     
     /** Battleship game model. */
-    private Board board;
+    public Board board;
     
     /** Create a battleship dialog. */
     public BattleshipDialog() {
@@ -78,7 +78,7 @@ public class BattleshipDialog extends JDialog {
         content.add(msgBar, BorderLayout.SOUTH);
         return content;
     }
-    
+   
     /** Create a panel for a game board. */
     private JPanel makeBoardPane() {
     	return new BoardPanel(board);
