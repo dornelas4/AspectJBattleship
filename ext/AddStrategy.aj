@@ -87,3 +87,4 @@ public privileged aspect AddStrategy {
 		}
 		return size;
 	}
+}
