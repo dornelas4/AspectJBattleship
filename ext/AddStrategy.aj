@@ -21,18 +21,21 @@ import battleship.model.Place;
 import battleship.model.Ship;
 
 public privileged aspect AddStrategy {
-	/* New play button */
-	private JButton newPlayButton = new JButton("Play");
-	private Strategy AIStrategy ;
+
+	private JButton newPlayButton = new JButton("Play"); //new play button
+	private Strategy AIStrategy ;//AI strategy
+	public JPanel opponent;// opponent options panel
+	public Board opBoard;//board for opponent play
+	private boolean gameMode = false; //true if playing against AI
 
 
-
-
+/* 
+ * Generates the opponent board and starts a new game
+ */
 	after(BattleshipDialog dialog) returning(JPanel content): target(dialog) && execution(JPanel makeControlPane()){
-		/*Gets the returning value of the method makeControlPane
-		Then adds the newPlayButton to the pane */
+	
 
-		JButton practice = dialog.playButton;
+		JButton practice = dialog.playButton; // old play button becomes practice button
 		practice.setText("Practice");
 		JPanel buttons = new JPanel(new FlowLayout(FlowLayout.LEFT));
 		buttons.add(practice); 
@@ -40,42 +43,44 @@ public privileged aspect AddStrategy {
 		content.add(buttons, BorderLayout.NORTH);
 
 		/* action to the button play */
-		newPlayButton.addActionListener(this::shipsStatus);
+		newPlayButton.addActionListener(this::startGame);
 
 		/* adds the oponent board and ship status */
 		JPanel playView = new JPanel(new BorderLayout());
-		Board opBoard = new Board(10);
-		//AIStrategy = new SmartStrategy(opBoard.places());
+		opBoard = new Board(10);
 		placeShips(opBoard);
 		BoardPanel opponentBoard = new BoardPanel(opBoard, 0, 0, 10,
 				new Color(51, 153, 255), Color.RED, Color.GRAY);
-
-		JPanel opponent = new JPanel( new GridLayout(1, 3));
-		JComboBox drop = createDropDown();
+		opponent = new JPanel( new GridLayout(1, 3)); 
+		JComboBox drop = createDropDown(); // dropdown for strategy selection
 		drop.setPreferredSize(new Dimension(80,80));
-		
 		opponent.setBorder(BorderFactory.createEmptyBorder(0,5,0,0));
-		JPanel shipsStatus = shipNamePanel(dialog.board.ships());
+		JPanel shipsStatus = shipNamePanel(dialog.board.ships()); // create ship status indicator
 		opponent.add(shipsStatus);
 		opponent.add(drop);
 		opponent.add(opponentBoard);
-		
-
-		/*opponent boar to the north and user board at center */
+		/*opponent board to the north and user board at center */
 		playView.add(opponent, BorderLayout.NORTH);
 		opponentBoard.setPreferredSize(new Dimension(110,110));
 		content.add(playView, BorderLayout.CENTER);
-		//AIStrategy = setDifficulty((String)drop.getSelectedItem(),dialog.board.places());
+		/* Initialize user strategy */
+		AIStrategy = new SmartStrategy(opBoard.places());
+		//AIStrategy = setDifficulty((String)drop.getSelectedItem(),opBoard.places());
 	}
-	/* to do
-	before(): this(BoardPanel) && execution(void Place.hit()){
-		AIStrategy.move();
-
-	}
+	/*
+	 * Generate AI shot after user shoots
 	 */
+	after(): this(BoardPanel) && call(void Place.hit()){
+		AIStrategy.move();
+		opponent.repaint();
+	}
 
-	private void shipsStatus(ActionEvent event){
-
+	/*
+	 * Listener for new play button
+	 */
+	private void startGame(ActionEvent event){
+		gameMode = true;
+		System.out.println(gameMode);
 	}
 	/*
 	 * Add strategy dropdown menu
@@ -87,7 +92,7 @@ public privileged aspect AddStrategy {
 		return options;
 	}
 	/*
-	 * Create strategy
+	 * Create strategy based on user selection from dropdown menu
 	 */
 	private Strategy setDifficulty(String difficulty,Iterable<Place> places){
 		if(difficulty.equals("Sweep")){
@@ -114,7 +119,9 @@ public privileged aspect AddStrategy {
 		}
 		return shipsStatus;
 	}
-
+	/*
+	 * Deploy user ships for opponent board
+	 */
 	private void placeShips(Board board) {
 		Random random = new Random();
 		int size = board.size();

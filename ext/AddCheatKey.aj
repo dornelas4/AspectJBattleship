@@ -29,16 +29,9 @@ privileged aspect AddCheatKey {
 	    InputMap inputMap = x.getInputMap(condition);
 	    String cheat = "Cheat";
 	    inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_F5, 0), cheat);
-	    actionMap.put(cheat, new KeyAction(x, cheat,test));
+	    actionMap.put(cheat, new KeyAction(x, cheat));
 	}
-	/////////////////////////////////////////////////////
-	pointcut testStartegy(BattleshipDialog x): this(x) && execution(void BattleshipDialog.placeShips(..));
-	after(BattleshipDialog x): testStartegy(x){ 
-		test = x;
-	}
-	
-	
-	//////////////////////////////////////////////////////
+
 	
 	pointcut image(BoardPanel board, Graphics g): this(board) && args(g) && execution(void paint(Graphics));
 	after(BoardPanel b, Graphics g): image(b,g){
@@ -52,20 +45,19 @@ privileged aspect AddCheatKey {
         private final BoardPanel boardPanel;
         private Strategy st;
         BattleshipDialog dialog ;
-        public KeyAction(BoardPanel boardPanel, String command, BattleshipDialog dialog) {
+        public KeyAction(BoardPanel boardPanel, String command) {
             this.boardPanel = boardPanel;
             putValue(ACTION_COMMAND_KEY, command);
-            st = new SmartStrategy(dialog.board.places());
+           
             
         }
         
         /** Called when a cheat is requested. */
         public void actionPerformed(ActionEvent event) {
-        // f5Pressed = !f5Pressed;
-        //   boardPanel.repaint();
-        
-        st.move();	
-        boardPanel.repaint();
+	        f5Pressed = !f5Pressed;
+	        boardPanel.repaint();
+	        
+      
         }   
      }
 	 
