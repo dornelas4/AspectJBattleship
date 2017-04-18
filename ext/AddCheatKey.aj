@@ -25,6 +25,7 @@ privileged aspect AddCheatKey {
 	/*
 	 * show ship locations in board if f5 is pressed
 	 */
+	
 	pointcut cheatKey(BoardPanel x): this(x) && execution(BoardPanel.new(..));
 	after(BoardPanel x): cheatKey(x){ 
 		ActionMap actionMap = x.getActionMap();

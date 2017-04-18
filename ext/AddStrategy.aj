@@ -28,6 +28,7 @@ public privileged aspect AddStrategy {
 	private Strategy AIStrategy ;//AI strategy
 	public JPanel opponent;// opponent options panel
 	public Board opBoard;//board for opponent play
+	public BoardPanel opponentBoard;
 
 
 	/////buttons for selection
@@ -56,7 +57,7 @@ public privileged aspect AddStrategy {
 		JPanel playView = new JPanel(new BorderLayout());
 		opBoard = new Board(10);
 		placeShips(opBoard);
-		BoardPanel opponentBoard = new BoardPanel(opBoard, 0, 0, 10,
+		opponentBoard = new BoardPanel(opBoard, 0, 0, 10,
 				new Color(51, 153, 255), Color.RED, Color.GRAY);
 		opponent = new JPanel( new GridLayout(1, 3)); 
 		JPanel drop = createDropDown(); // dropdown for strategy selection
@@ -81,6 +82,7 @@ public privileged aspect AddStrategy {
 	after(): execution(void BattleshipDialog.playButtonClicked(*)){
 		opBoard.reset();
 		placeShips(opBoard);
+		
 	}
 
 
@@ -136,22 +138,7 @@ public privileged aspect AddStrategy {
 			AIStrategy = new RandomStrategy(opBoard.places());
 		}
 	}
-	/*
-	 * Create strategy based on user selection from dropdown menu
-	 */
-	private Strategy setDifficulty(String difficulty,Iterable<Place> places){
-		if(difficulty.equals("Sweep")){
-			AIStrategy = new SmartStrategy(places);
-		}
-		else if(difficulty.equals("Random")){
-			AIStrategy = new SmartStrategy(places);
-		}
-		else{
-			AIStrategy = new SmartStrategy(places);
-		}
-		return AIStrategy;
-	}
-
+	
 	/*
 	 * Add JPanel with ship name and size
 	 */
