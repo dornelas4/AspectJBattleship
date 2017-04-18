@@ -9,10 +9,12 @@ import java.awt.event.ActionEvent;
 import java.util.Random;
 
 import javax.swing.BorderFactory;
+import javax.swing.ButtonGroup;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JRadioButton;
 
 import battleship.BattleshipDialog;
 import battleship.BoardPanel;
@@ -28,12 +30,17 @@ public privileged aspect AddStrategy {
 	public Board opBoard;//board for opponent play
 	private boolean gameMode = false; //true if playing against AI
 
+	/////buttons for selection
+	public JRadioButton smart;
+	public JRadioButton sweep;
+	public JRadioButton random;
 
-/* 
- * Generates the opponent board and starts a new game
- */
+
+	/* 
+	 * Generates the opponent board and starts a new game
+	 */
 	after(BattleshipDialog dialog) returning(JPanel content): target(dialog) && execution(JPanel makeControlPane()){
-	
+
 
 		JButton practice = dialog.playButton; // old play button becomes practice button
 		practice.setText("Practice");
@@ -52,8 +59,8 @@ public privileged aspect AddStrategy {
 		BoardPanel opponentBoard = new BoardPanel(opBoard, 0, 0, 10,
 				new Color(51, 153, 255), Color.RED, Color.GRAY);
 		opponent = new JPanel( new GridLayout(1, 3)); 
-		JComboBox drop = createDropDown(); // dropdown for strategy selection
-		drop.setPreferredSize(new Dimension(80,80));
+		JPanel drop = createDropDown(); // dropdown for strategy selection
+
 		opponent.setBorder(BorderFactory.createEmptyBorder(0,5,0,0));
 		JPanel shipsStatus = shipNamePanel(dialog.board.ships()); // create ship status indicator
 		opponent.add(shipsStatus);
@@ -63,9 +70,6 @@ public privileged aspect AddStrategy {
 		playView.add(opponent, BorderLayout.NORTH);
 		opponentBoard.setPreferredSize(new Dimension(110,110));
 		content.add(playView, BorderLayout.CENTER);
-		/* Initialize user strategy */
-		AIStrategy = new SmartStrategy(opBoard.places());
-		//AIStrategy = setDifficulty((String)drop.getSelectedItem(),opBoard.places());
 	}
 	/*
 	 * Generate AI shot after user shoots
@@ -83,13 +87,54 @@ public privileged aspect AddStrategy {
 		System.out.println(gameMode);
 	}
 	/*
-	 * Add strategy dropdown menu
+	 * Add strategy radio button menu
+	 * smart is selected by default
 	 */
-	private JComboBox createDropDown(){
-		String[] difficulties = new String[] {"Smart", "Random","Sweep"};
+	private JPanel createDropDown(){
 
-		JComboBox<String> options = new JComboBox<>(difficulties);
-		return options;
+		JPanel strategies = new JPanel();
+		smart =new JRadioButton("Smart");
+		smart.setActionCommand("smart");
+		smart.setSelected(true);
+		AIStrategy = new SmartStrategy(opBoard.places());
+		sweep =new JRadioButton("Sweep");
+		sweep.setActionCommand("sweep");
+		random =new JRadioButton("Random");
+		random.setActionCommand("random");
+		smart.addActionListener(this::buttonListener);
+		sweep.addActionListener(this::buttonListener);
+		random.addActionListener(this::buttonListener);
+		strategies.add(smart);
+		strategies.add(sweep);
+		strategies.add(random);
+
+		return strategies;
+	}
+	/*
+	 * Button listener actions
+	 * strategy is equals to whatever option is selected
+	 */
+	private void buttonListener(ActionEvent e){
+		String selected = e.getActionCommand();
+		System.out.print(e.getActionCommand());
+		if(selected.equals("smart")){
+			smart.setSelected(true);
+			sweep.setSelected(false);
+			random.setSelected(false);
+			AIStrategy = new SmartStrategy(opBoard.places());
+		}
+		else if(selected.equals("sweep")){
+			smart.setSelected(false);
+			sweep.setSelected(true);
+			random.setSelected(false);
+			AIStrategy = new SweepStrategy(opBoard.places());
+		}
+		else if(selected.equals("random")){
+			smart.setSelected(false);
+			sweep.setSelected(false);
+			random.setSelected(true);
+			AIStrategy = new RandomStrategy(opBoard.places());
+		}
 	}
 	/*
 	 * Create strategy based on user selection from dropdown menu
