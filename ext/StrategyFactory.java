@@ -9,7 +9,7 @@ import battleship.model.*;
 
 abstract class Strategy {
 
-	public HashMap<Integer,Place> allMoves;
+	public HashMap<Integer,Place> allMoves; 
 	public List<Integer> allKeys;
 
 	/*
@@ -23,6 +23,9 @@ abstract class Strategy {
 			boardIndex++;
 		}
 	}
+	/*
+	 * Creae list with all keys for later use in accessing hashmap
+	 */
 	public void setAllKeys(){
 		allKeys = new ArrayList<Integer>();
 		for(int i =1; i<=100;i++){
@@ -49,14 +52,13 @@ abstract class Strategy {
 	}
 
 
-	////////////////////////////////////////////////////////////////////////// 
 
 
-	
 
-	
 
-	
+
+
+
 }
 
 

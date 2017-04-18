@@ -11,19 +11,20 @@ import javax.sound.sampled.UnsupportedAudioFileException;
 import battleship.model.*;
 
 public aspect AddSound {
-	/* isHit */
 	/** Directory where audio files are stored. */
     private static final String SOUND_DIR = "src\\sounds\\";
     
-    
+    //play audio when ship is hit
 	after(): execution(void notifyHit(Place, int)){
 		playAudio("gun.wav");
 	}
+	//play audio when ship is sunk
 	after(): execution(void notifyShipSunk(Ship)){
 		playAudio("sunk.wav");
 	}
-	/** Play the given audio file. Inefficient because a file will be 
-     * (re)loaded each time it is played. */
+	/*
+	 * Play the audio file
+	 */
     public static void playAudio(String filename) {
       try {
     	  File sound = new File(SOUND_DIR + filename);
@@ -37,6 +38,6 @@ public aspect AddSound {
       }
     }
 	
-	/*isSunk*/
+
     
 }

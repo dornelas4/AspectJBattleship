@@ -8,6 +8,9 @@ public class SweepStrategy extends Strategy{
 		super(places);
 	}
 	@Override
+	/*
+	 * shot the next row in the same column
+	 */
 	void move(){
 		Place shot = allMoves.get(index);
 		shot.hit();

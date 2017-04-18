@@ -17,11 +17,14 @@ import ext.SweepStrategy;
 
 import battleship.BattleshipDialog;
 import battleship.BoardPanel;
+import ext.AddStrategy;
 import battleship.model.Place;
 
 privileged aspect AddCheatKey {
-	static boolean f5Pressed = false;	//checks if the button was press
-	BattleshipDialog test ;
+	static boolean f5Pressed = false;	//true if f5 was pressed
+	/*
+	 * show ship locations in board if f5 is pressed
+	 */
 	pointcut cheatKey(BoardPanel x): this(x) && execution(BoardPanel.new(..));
 	after(BoardPanel x): cheatKey(x){ 
 		ActionMap actionMap = x.getActionMap();
@@ -32,7 +35,9 @@ privileged aspect AddCheatKey {
 	    actionMap.put(cheat, new KeyAction(x, cheat));
 	}
 
-	
+	/*
+	 * show ship locations if f5 pressed
+	 */
 	pointcut image(BoardPanel board, Graphics g): this(board) && args(g) && execution(void paint(Graphics));
 	after(BoardPanel b, Graphics g): image(b,g){
 		if(f5Pressed){ 
@@ -43,8 +48,6 @@ privileged aspect AddCheatKey {
 	 @SuppressWarnings("serial")
      private static class KeyAction extends AbstractAction {
         private final BoardPanel boardPanel;
-        private Strategy st;
-        BattleshipDialog dialog ;
         public KeyAction(BoardPanel boardPanel, String command) {
             this.boardPanel = boardPanel;
             putValue(ACTION_COMMAND_KEY, command);
@@ -54,13 +57,15 @@ privileged aspect AddCheatKey {
         
         /** Called when a cheat is requested. */
         public void actionPerformed(ActionEvent event) {
-	        f5Pressed = !f5Pressed;
+	        f5Pressed = !f5Pressed; //switch flag after each press
 	        boardPanel.repaint();
-	        
+	       
       
         }   
      }
-	 
+	 /*
+	  * Repaint board to show ship location if it has not been hit
+	  */
 	 public static void showShips(BoardPanel board, Graphics g){
 		 for(Place p: board.board.places()) {
 			if (p.hasShip()) {
