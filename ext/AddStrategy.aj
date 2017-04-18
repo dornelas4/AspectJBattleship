@@ -9,9 +9,9 @@ import java.awt.event.ActionEvent;
 import java.util.Random;
 
 import javax.swing.BorderFactory;
-import javax.swing.ButtonGroup;
+
 import javax.swing.JButton;
-import javax.swing.JComboBox;
+
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
@@ -24,34 +24,34 @@ import battleship.model.Ship;
 
 public privileged aspect AddStrategy {
 
-	private JButton newPlayButton = new JButton("Play"); //new play button
+	private JButton BattleshipDialog.newPlayButton = new JButton("Play"); //new play button
 	private Strategy AIStrategy ;//AI strategy
 	public JPanel opponent;// opponent options panel
 	public Board opBoard;//board for opponent play
-	private boolean gameMode = false; //true if playing against AI
+
 
 	/////buttons for selection
 	public JRadioButton smart;
 	public JRadioButton sweep;
 	public JRadioButton random;
-
+	
+	public JPanel BattleshipDialog.addNewPlay(){
+		JButton practice = playButton; // old play button becomes practice button
+		practice.setText("Practice");
+		JPanel buttons = new JPanel(new FlowLayout(FlowLayout.LEFT));
+		buttons.add(practice); 
+		buttons.add(newPlayButton);
+		/* action to the button play */
+		newPlayButton.addActionListener(this::playButtonClicked);
+		return buttons;
+	}
 
 	/* 
 	 * Generates the opponent board and starts a new game
 	 */
 	after(BattleshipDialog dialog) returning(JPanel content): target(dialog) && execution(JPanel makeControlPane()){
-
-
-		JButton practice = dialog.playButton; // old play button becomes practice button
-		practice.setText("Practice");
-		JPanel buttons = new JPanel(new FlowLayout(FlowLayout.LEFT));
-		buttons.add(practice); 
-		buttons.add(this.newPlayButton);
+		JPanel buttons = dialog.addNewPlay();
 		content.add(buttons, BorderLayout.NORTH);
-
-		/* action to the button play */
-		newPlayButton.addActionListener(this::startGame);
-
 		/* adds the oponent board and ship status */
 		JPanel playView = new JPanel(new BorderLayout());
 		opBoard = new Board(10);
@@ -78,14 +78,14 @@ public privileged aspect AddStrategy {
 		AIStrategy.move();
 		opponent.repaint();
 	}
-
-	/*
-	 * Listener for new play button
-	 */
-	private void startGame(ActionEvent event){
-		gameMode = true;
-		System.out.println(gameMode);
+	after(): execution(void BattleshipDialog.playButtonClicked(*)){
+		opBoard.reset();
+		placeShips(opBoard);
 	}
+
+	
+
+	
 	/*
 	 * Add strategy radio button menu
 	 * smart is selected by default
