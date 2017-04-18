@@ -34,7 +34,7 @@ public privileged aspect AddStrategy {
 	public JRadioButton smart;
 	public JRadioButton sweep;
 	public JRadioButton random;
-	
+
 	public JPanel BattleshipDialog.addNewPlay(){
 		JButton practice = playButton; // old play button becomes practice button
 		practice.setText("Practice");
@@ -83,9 +83,9 @@ public privileged aspect AddStrategy {
 		placeShips(opBoard);
 	}
 
-	
 
-	
+
+
 	/*
 	 * Add strategy radio button menu
 	 * smart is selected by default
@@ -116,7 +116,7 @@ public privileged aspect AddStrategy {
 	 */
 	private void buttonListener(ActionEvent e){
 		String selected = e.getActionCommand();
-		System.out.print(e.getActionCommand());
+		System.out.print(e.getActionCommand() + "Please start a new game");
 		if(selected.equals("smart")){
 			smart.setSelected(true);
 			sweep.setSelected(false);
